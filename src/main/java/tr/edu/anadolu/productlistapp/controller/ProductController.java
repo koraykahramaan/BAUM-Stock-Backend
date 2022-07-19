@@ -42,10 +42,10 @@ public class ProductController {
         return productService.sortByPriceDesc(page, size);
     }
 
-    @GetMapping("/sortByType")
+    @GetMapping("/sortByType/{productType}")
     public ResponseEntity<List<Product>> sortByType(@RequestParam(defaultValue = "0") int page,
-                                                    @RequestParam(defaultValue = "5") int size) {
-        return productService.sortByType(page, size);
+                                                    @RequestParam(defaultValue = "5") int size, @PathVariable String productType) {
+        return productService.sortByType(page, size, productType);
     }
 
     @GetMapping

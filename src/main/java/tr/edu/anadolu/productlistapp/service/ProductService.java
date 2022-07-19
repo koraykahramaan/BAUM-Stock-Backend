@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import tr.edu.anadolu.productlistapp.model.Product;
 import tr.edu.anadolu.productlistapp.repository.ProductRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -96,11 +97,17 @@ public class ProductService {
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
-    public ResponseEntity<List<Product>> sortByType(int pageNumber, int sizeNumber) {
-        Pageable pageableRequest = PageRequest.of(pageNumber, sizeNumber, Sort.by("productType"));
+    public ResponseEntity<List<Product>> sortByType(int pageNumber, int sizeNumber, String usergivenType) {
+        Pageable pageableRequest = PageRequest.of(pageNumber, sizeNumber);
         Page<Product> page = productRepository.findAll(pageableRequest);
-        List<Product> products = page.getContent();
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        List<Product> products = new ArrayList<>(page.getContent());
+        List<Product> productType = new ArrayList<>();
+        for( Product product : products ) {
+            if(product.getProductType().equals(usergivenType)) {
+                productType.add(product);
+            }
+        }
+        return new ResponseEntity<>(productType, HttpStatus.OK);
     }
 
     public void deleteAll() {
