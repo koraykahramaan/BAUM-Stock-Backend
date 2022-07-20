@@ -20,6 +20,8 @@ public class ProductService {
 
     static int id = 1;
 
+    /// Armagan geldi
+
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
