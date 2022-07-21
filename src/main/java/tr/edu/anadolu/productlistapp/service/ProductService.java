@@ -39,13 +39,18 @@ public class ProductService {
 
     // set product id for every new product
     public ResponseEntity<Product> createNewProduct(Product product) {
-        try {
-            product.setProductId("URUN_" + id++);
-            productRepository.save(product);
-            return new ResponseEntity<>(product, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+        List<Product> products = new ArrayList<>();
+        productRepository.findAll().forEach(products::add);
+
+        for (Product prdct : products) {
+            if (prdct.getProductName().equals(product.getProductName())) {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         }
+        product.setProductId("URUN_" + id++);
+        productRepository.save(product);
+        return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
     public Product getProduct(String productId) {
