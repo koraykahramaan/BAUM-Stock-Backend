@@ -14,4 +14,6 @@ public class Product {
     private double productPrice;
     private String productType;
     private String productImage;
+    private boolean availability;
+
 }

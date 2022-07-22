@@ -48,13 +48,13 @@ public class ProductController {
         return productService.sortByType(page, size, productType);
     }
 
-    @GetMapping
+    @GetMapping("/listProducts")
     public ResponseEntity<List<Product>> findAll(@RequestParam(defaultValue = "0") int page,
                                                  @RequestParam(defaultValue = "5") int size) {
         return productService.findAll(page, size);
     }
 
-    @PostMapping
+    @PostMapping("/createProduct")
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         return productService.createNewProduct(product);
     }
@@ -72,6 +72,12 @@ public class ProductController {
     @DeleteMapping("/{productId}")
     public void deleteProduct(@PathVariable String productId) {
         productService.deleteProduct(productId);
+    }
+
+    // set true or false to availability of product
+    @PutMapping("/{productId}/availability")
+    public Product setAvailability(@PathVariable String productId) {
+        return productService.setAvailability(productId);
     }
 
     @DeleteMapping

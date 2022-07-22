@@ -20,7 +20,6 @@ public class ProductService {
 
     static int id = 1;
 
-
     public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
@@ -34,10 +33,9 @@ public class ProductService {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
-    // set product id for every new product
+
     public ResponseEntity<Product> createNewProduct(Product product) {
 
         List<Product> products = new ArrayList<>();
@@ -49,6 +47,7 @@ public class ProductService {
             }
         }
         product.setProductId("URUN_" + id++);
+        product.setAvailability(true);
         productRepository.save(product);
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
@@ -118,5 +117,20 @@ public class ProductService {
 
     public void deleteAll() {
         productRepository.deleteAll();
+    }
+
+    public Product setAvailability(String productId) {
+        Optional<Product> product = productRepository.findById(productId);
+        if (product.isPresent()) {
+            Product foundProduct = product.get();
+            foundProduct.setAvailability(!foundProduct.isAvailability()); // this is the simplifed version of if-else statement below
+//            if (foundProduct.isAvailability()) {
+//                foundProduct.setAvailability(false);
+//            } else {
+//                foundProduct.setAvailability(true);
+//            }
+            return productRepository.save(foundProduct);
+        }
+        return null;
     }
 }
