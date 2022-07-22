@@ -85,4 +85,16 @@ public class ProductController {
         productService.deleteAll();
     }
 
+    @GetMapping("/listAvailableProducts")
+    public ResponseEntity<List<Product>> findAvailableProducts(@RequestParam(defaultValue = "0") int page,
+                                                 @RequestParam(defaultValue = "5") int size) {
+        return productService.findAvailableProducts(page, size);
+    }
+
+    @GetMapping("/listNotAvailableProducts")
+    public ResponseEntity<List<Product>> findNotAvailableProducts(@RequestParam(defaultValue = "0") int page,
+                                                               @RequestParam(defaultValue = "5") int size) {
+        return productService.findNotAvailableProducts(page, size);
+    }
+
 }
