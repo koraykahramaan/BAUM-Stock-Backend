@@ -133,4 +133,32 @@ public class ProductService {
         }
         return null;
     }
+
+    public ResponseEntity<List<Product>> findAvailableProducts(int page, int size) {
+        Pageable pageableRequest = PageRequest.of(page, size, Sort.by("productId"));
+        Page<Product> page1 = productRepository.findAll(pageableRequest);
+        List<Product> products = page1.getContent();
+        List<Product> availableProducts = new ArrayList<>();
+        for( Product product : products ) {
+            if(product.isAvailability()) {
+                availableProducts.add(product);
+            }
+        }
+        return new ResponseEntity<>(availableProducts, HttpStatus.OK);
+
+    }
+
+    public ResponseEntity<List<Product>> findNotAvailableProducts(int page, int size) {
+        Pageable pageableRequest = PageRequest.of(page, size, Sort.by("productId"));
+        Page<Product> page2 = productRepository.findAll(pageableRequest);
+        List<Product> products = page2.getContent();
+        List<Product> availableProducts = new ArrayList<>();
+        for( Product product : products ) {
+            if(!product.isAvailability()) {
+                availableProducts.add(product);
+            }
+        }
+        return new ResponseEntity<>(availableProducts, HttpStatus.OK);
+
+    }
 }
