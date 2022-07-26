@@ -33,18 +33,23 @@ public class ProductService {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
-    // set product id for every new product
+
     public ResponseEntity<Product> createNewProduct(Product product) {
-        try {
-            product.setProductId("URUN_" + id++);
-            productRepository.save(product);
-            return new ResponseEntity<>(product, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+        List<Product> products = new ArrayList<>();
+        productRepository.findAll().forEach(products::add);
+
+        for (Product prdct : products) {
+            if (prdct.getProductName().equals(product.getProductName())) {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         }
+        product.setProductId("URUN_" + id++);
+        product.setAvailability(true);
+        productRepository.save(product);
+        return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
     public Product getProduct(String productId) {
@@ -112,5 +117,48 @@ public class ProductService {
 
     public void deleteAll() {
         productRepository.deleteAll();
+    }
+
+    public Product setAvailability(String productId) {
+        Optional<Product> product = productRepository.findById(productId);
+        if (product.isPresent()) {
+            Product foundProduct = product.get();
+            foundProduct.setAvailability(!foundProduct.isAvailability()); // this is the simplifed version of if-else statement below
+//            if (foundProduct.isAvailability()) {
+//                foundProduct.setAvailability(false);
+//            } else {
+//                foundProduct.setAvailability(true);
+//            }
+            return productRepository.save(foundProduct);
+        }
+        return null;
+    }
+
+    public ResponseEntity<List<Product>> findAvailableProducts(int page, int size) {
+        Pageable pageableRequest = PageRequest.of(page, size, Sort.by("productId"));
+        Page<Product> page1 = productRepository.findAll(pageableRequest);
+        List<Product> products = page1.getContent();
+        List<Product> availableProducts = new ArrayList<>();
+        for( Product product : products ) {
+            if(product.isAvailability()) {
+                availableProducts.add(product);
+            }
+        }
+        return new ResponseEntity<>(availableProducts, HttpStatus.OK);
+
+    }
+
+    public ResponseEntity<List<Product>> findNotAvailableProducts(int page, int size) {
+        Pageable pageableRequest = PageRequest.of(page, size, Sort.by("productId"));
+        Page<Product> page2 = productRepository.findAll(pageableRequest);
+        List<Product> products = page2.getContent();
+        List<Product> availableProducts = new ArrayList<>();
+        for( Product product : products ) {
+            if(!product.isAvailability()) {
+                availableProducts.add(product);
+            }
+        }
+        return new ResponseEntity<>(availableProducts, HttpStatus.OK);
+
     }
 }

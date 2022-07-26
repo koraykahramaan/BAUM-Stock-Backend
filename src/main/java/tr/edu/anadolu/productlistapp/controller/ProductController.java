@@ -48,13 +48,13 @@ public class ProductController {
         return productService.sortByType(page, size, productType);
     }
 
-    @GetMapping
+    @GetMapping("/listProducts")
     public ResponseEntity<List<Product>> findAll(@RequestParam(defaultValue = "0") int page,
                                                  @RequestParam(defaultValue = "5") int size) {
         return productService.findAll(page, size);
     }
 
-    @PostMapping
+    @PostMapping("/createProduct")
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         return productService.createNewProduct(product);
     }
@@ -74,9 +74,27 @@ public class ProductController {
         productService.deleteProduct(productId);
     }
 
+    // set true or false to availability of product
+    @PutMapping("/{productId}/availability")
+    public Product setAvailability(@PathVariable String productId) {
+        return productService.setAvailability(productId);
+    }
+
     @DeleteMapping
     public void deleteAll() {
         productService.deleteAll();
+    }
+
+    @GetMapping("/listAvailableProducts")
+    public ResponseEntity<List<Product>> findAvailableProducts(@RequestParam(defaultValue = "0") int page,
+                                                 @RequestParam(defaultValue = "5") int size) {
+        return productService.findAvailableProducts(page, size);
+    }
+
+    @GetMapping("/listNotAvailableProducts")
+    public ResponseEntity<List<Product>> findNotAvailableProducts(@RequestParam(defaultValue = "0") int page,
+                                                               @RequestParam(defaultValue = "5") int size) {
+        return productService.findNotAvailableProducts(page, size);
     }
 
 }
